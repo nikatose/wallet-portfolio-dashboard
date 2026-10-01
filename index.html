@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Wallet Portfolio Dashboard</title>
+  <meta
+    name="description"
+    content="A simple multi-chain wallet portfolio dashboard for EVM addresses."
+  >
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">◈</div>
+
+      <div>
+        <div class="brand-title">Portfolio</div>
+        <div class="brand-subtitle">EVM Wallet Dashboard</div>
+      </div>
+    </div>
+
+    <a
+      href="https://github.com/nikatose/wallet-portfolio-dashboard"
+      target="_blank"
+      class="github-link"
+    >
+      GitHub ↗
+    </a>
+  </header>
+
+
+  <main class="container">
+
+    <section class="hero">
+
+      <div>
+        <div class="eyebrow">MULTI-CHAIN PORTFOLIO</div>
+
+        <h1>
+          Explore a wallet's
+          <span>portfolio</span>
+        </h1>
+
+        <p>
+          Enter an EVM address to inspect native balances and ERC-20 tokens
+          across supported networks.
+        </p>
+      </div>
+
+
+      <div class="search-card">
+
+        <div class="input-label">
+          Wallet address
+        </div>
+
+        <div class="search-row">
+
+          <input
+            id="addressInput"
+            type="text"
+            placeholder="0x..."
+            autocomplete="off"
+            spellcheck="false"
+          >
+
+          <button id="loadButton">
+            Analyze
+          </button>
+
+        </div>
+
+        <div id="inputError" class="input-error"></div>
+
+      </div>
+
+    </section>
+
+
+    <section id="dashboard" class="dashboard hidden">
+
+      <div class="wallet-header">
+
+        <div class="wallet-info">
+
+          <div class="wallet-avatar">
+            ◈
+          </div>
+
+          <div>
+            <div class="wallet-label">
+              WALLET
+            </div>
+
+            <div class="wallet-address">
+              <span id="shortAddress">—</span>
+
+              <button
+                id="copyButton"
+                class="icon-button"
+                title="Copy address"
+              >
+                ⧉
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="network-control">
+
+          <label for="networkSelect">
+            Network
+          </label>
+
+          <select id="networkSelect">
+            <option value="ethereum">Ethereum</option>
+            <option value="base">Base</option>
+            <option value="arbitrum">Arbitrum One</option>
+            <option value="optimism">Optimism</option>
+            <option value="polygon">Polygon</option>
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div id="loading" class="loading hidden">
+
+        <div class="spinner"></div>
+
+        <div>
+          <strong>Loading portfolio</strong>
+          <span>Fetching blockchain data...</span>
+        </div>
+
+      </div>
+
+
+      <div id="errorBox" class="error-box hidden"></div>
+
+
+      <div id="stats" class="stats">
+
+        <div class="stat-card primary-stat">
+
+          <div class="stat-label">
+            NATIVE BALANCE
+          </div>
+
+          <div id="nativeBalance" class="stat-value">
+            —
+          </div>
+
+          <div id="nativeSymbol" class="stat-secondary">
+            —
+          </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            TOKENS
+          </div>
+
+          <div id="tokenCount" class="stat-value">
+            —
+          </div>
+
+          <div class="stat-secondary">
+            ERC-20 assets
+          </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <div class="stat-label">
+            NETWORK
+          </div>
+
+          <div id="networkName" class="stat-value">
+            —
+          </div>
+
+          <div id="chainId" class="stat-secondary">
+            —
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <section class="portfolio-section">
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-title">
+              Assets
+            </div>
+
+            <div class="section-subtitle">
+              Detected tokens on this network
+            </div>
+          </div>
+
+          <button id="refreshButton" class="refresh-button">
+            ↻ Refresh
+          </button>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Balance</th>
+                <th>USD Value</th>
+                <th>Share</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="assetTable">
+            </tbody>
+
+          </table>
+
+          <div id="emptyState" class="empty-state hidden">
+            No ERC-20 token balances were found.
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <section class="allocation-section">
+
+        <div class="section-header">
+
+          <div>
+            <div class="section-title">
+              Portfolio Allocation
+            </div>
+
+            <div class="section-subtitle">
+              Distribution of detected assets
+            </div>
+          </div>
+
+        </div>
+
+        <div id="allocation" class="allocation">
+        </div>
+
+      </section>
+
+
+      <div class="footer-note">
+        Data is read-only. This dashboard never requests your seed phrase,
+        private key or wallet connection.
+      </div>
+
+    </section>
+
+
+    <section id="welcome" class="welcome">
+
+      <div class="welcome-icon">
+        ◇
+      </div>
+
+      <h2>
+        Your wallet, visualized.
+      </h2>
+
+      <p>
+        Enter a public EVM wallet address above to get started.
+      </p>
+
+      <div class="features">
+
+        <div>
+          <strong>01</strong>
+          <span>Multi-chain</span>
+        </div>
+
+        <div>
+          <strong>02</strong>
+          <span>Read-only</span>
+        </div>
+
+        <div>
+          <strong>03</strong>
+          <span>No wallet connection</span>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    <span>Wallet Portfolio Dashboard</span>
+    <span>Built for EVM networks</span>
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
